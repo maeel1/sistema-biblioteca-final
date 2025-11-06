@@ -1,0 +1,918 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="../principal.html">Savir Sistemas</a>
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                
+                <li class="nav-item">
+                    <a class="nav-link" href="../principal.html">Início</a>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a
+                        class="nav-link dropdown-toggle"
+                        href="#"
+                        id="cadastrosDropdown"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                    >
+                        Cadastros
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="cadastrosDropdown">
+                        <li><a class="dropdown-item" href="../usuarios/cadastro_usuarios.html">Usuários</a></li>
+                        <li><a class="dropdown-item" href="../livros/cadastro_livros.html">Livros</a></li>
+                        <li><a class="dropdown-item" href="../autores/cadastro_autores.html">Autores</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="fazerLogout()">Sair</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<script>
+    // ESTA LÓGICA É CRUCIAL. Ela ajusta os links do menu para funcionar corretamente 
+    // em páginas que estão em subpastas (como /usuarios/cadastro_usuarios.html)
+
+    // O código acima usa links relativos (ex: ../principal.html).
+    // Se a página for a principal (na raiz), ela precisa de links sem o "../".
+    // Se a página for um cadastro (em uma subpasta), ela precisa do "../".
+
+    // Esta função ajusta o caminho dos links no menu dinamicamente.
+    function ajustarLinksMenu() {
+        const path = window.location.pathname;
+        const links = document.querySelectorAll('#navbarNav a');
+
+        links.forEach(link => {
+            let href = link.getAttribute('href');
+            
+            // Só ajusta links que apontam para arquivos do projeto
+            if (href && !href.startsWith('http') && !href.startsWith('#')) {
+                // Se a página atual está em uma subpasta (ex: /usuarios/...)
+                if (path.includes('/usuarios/') || path.includes('/livros/') || path.includes('/autros/')) {
+                    // Os links já estão corretos (com ../)
+                } else {
+                    // Se a página está na raiz (ex: principal.html), remove o "../"
+                    if (href.startsWith('../')) {
+                        link.setAttribute('href', href.substring(3));
+                    }
+                }
+            }
+        });
+    }
+
+    // Chama a função após o menu ser carregado (ou na inicialização)
+    document.addEventListener('DOMContentLoaded', ajustarLinksMenu);
+</script>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Savir Sistemas - Principal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script src="scripts.js"></script> 
+</head>
+<body class="bg-light min-vh-100 d-flex flex-column">
+
+    <script>verificarLogin();</script>
+
+    <div id="menu">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="principal.html">Gerenciar Biblioteca</a>
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                
+                <li class="nav-item">
+                    <a class="nav-link active" href="principal.html">Início</a>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a
+                        class="nav-link dropdown-toggle"
+                        href="#"
+                        id="cadastrosDropdown"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                    >
+                        Cadastros
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="cadastrosDropdown">
+                        <li><a class="dropdown-item" href="usuarios/cadastro_usuarios.html">Usuários</a></li>
+                        <li><a class="dropdown-item" href="livros/cadastro_livros.html">Livros</a></li>
+                        <li><a class="dropdown-item" href="autores/cadastro_autores.html">Autores</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="fazerLogout()">Sair</a></li>
+                    </ul>
+                </li>
+                
+                <li class="nav-item"><a class="nav-link" href="#">Sobre</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Serviços</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Contato</a></li>
+                
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<script>
+    // ESTA LÓGICA DEVE SER COLADA JUNTO COM O MENU!
+    // Ela corrige os caminhos do menu dinamicamente
+    function ajustarLinksMenu() {
+        const path = window.location.pathname;
+        const links = document.querySelectorAll('#navbarNav a:not([onclick])'); 
+
+        const isSubFolder = path.includes('/usuarios/') || path.includes('/livros/') || path.includes('/autores/');
+
+        links.forEach(link => {
+            let href = link.getAttribute('href');
+            
+            if (href && !href.startsWith('http')) {
+                if (isSubFolder) {
+                    // Estamos em /usuarios/, os links precisam de ../
+                    if (!href.startsWith('../')) {
+                         link.setAttribute('href', `../${href}`);
+                    }
+                } else {
+                    // Estamos na raiz (login/principal), os links não precisam de ../
+                    if (href.startsWith('../')) {
+                        link.setAttribute('href', href.substring(3));
+                    }
+                }
+            }
+        });
+    }
+    // Chama a função após o conteúdo ser carregado
+    document.addEventListener('DOMContentLoaded', ajustarLinksMenu);
+</script>
+        </div>
+    
+    <main id="principal" class="container-fluid flex-fill pt-4">
+        <h1>Bem-vindo ao Gerenciamento de Biblioteca</h1>
+        <p class="lead">Use o menu de **Cadastros** (Usuários, Livros e Autores) para gerenciar o sistema.</p>
+        
+        <div class="row mt-4">
+            <div class="col-md-4"><a href="usuarios/cadastro_usuarios.html" class="btn btn-primary w-100">Gerenciar Usuários</a></div>
+            <div class="col-md-4"><a href="livros/cadastro_livros.html" class="btn btn-secondary w-100">Gerenciar Livros</a></div>
+            <div class="col-md-4"><a href="autores/cadastro_autores.html" class="btn btn-info w-100">Gerenciar Autores</a></div>
+        </div>
+        
+    </main>
+
+    <div id="rodape">
+        <footer class="bg-dark text-white text-center py-3 mt-auto">
+    &copy; 2025 Savir Sistemas Todos os direitos reservados
+</footer>
+        </div>
+</body>
+</html>
+<footer class="bg-primary text-white text-center py-3 mt-auto">
+    &copy; 2025 Savir Sistemas Todos os direitos reservados
+</footer>
+// ====================================================================
+// FUNÇÕES DE SEGURANÇA (LOGIN/LOGOUT)
+// ====================================================================
+
+// Funções Auxiliares de Navegação (CORRIGIDAS PARA AMBIENTE LOCAL)
+// Esta função lida com o redirecionamento para a página principal
+function irParaPrincipal() {
+    // Tenta encontrar a URL base para garantir que o link funcione, mesmo em subpastas
+    const urlBase = window.location.href.split('/usuarios/')[0] 
+                    || window.location.href.split('/livros/')[0]
+                    || window.location.href.split('/autores/')[0];
+    
+    // Se a URLBase foi encontrada (em uma subpasta), usa o caminho completo
+    if (urlBase && !urlBase.includes('principal.html')) {
+        window.location.href = `${urlBase}/principal.html`;
+    } 
+    // Se estiver na raiz ou a lógica falhou, usa o caminho relativo
+    else {
+        window.location.href = '../principal.html'; 
+    }
+}
+
+// Esta função lida com o redirecionamento para a página de login
+function irParaLogin() {
+    const urlBase = window.location.href.split('/usuarios/')[0] 
+                    || window.location.href.split('/livros/')[0]
+                    || window.location.href.split('/autores/')[0];
+
+    // Se a URLBase foi encontrada, usa o caminho completo para a raiz
+    if (urlBase && !urlBase.includes('login.html')) {
+        window.location.href = `${urlBase}/login.html`;
+    } 
+    // Se estiver na raiz, usa o caminho relativo
+    else {
+        window.location.href = './login.html'; 
+    }
+}
+
+// 1. Verificar Status de Login (Requisito 3 - COM CORREÇÃO)
+function verificarLogin() {
+    const path = window.location.pathname;
+    
+    // CORREÇÃO: Permite o acesso a login e ao cadastro de usuário sem ser redirecionado
+    if (path.includes('login.html') || path.includes('cadastro_usuarios.html')) {
+        return; 
+    }
+
+    const usuarioLogado = sessionStorage.getItem('usuarioLogado');
+
+    if (!usuarioLogado) {
+        // Redireciona para o login se não estiver logado
+        irParaLogin();
+    }
+}
+
+// 2. Fazer Login (Requisito 2)
+function fazerLogin(email, senha) {
+    const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+    const usuarioEncontrado = usuarios.find(u => u.email === email && u.senha === senha);
+
+    if (usuarioEncontrado) {
+        sessionStorage.setItem('usuarioLogado', usuarioEncontrado.email);
+        window.location.href = 'principal.html';
+        return true;
+    } else {
+        alert('E-mail ou senha incorretos.');
+        return false;
+    }
+}
+
+// 3. Fazer Logout (Requisito 6)
+function fazerLogout() {
+    sessionStorage.removeItem('usuarioLogado');
+    irParaLogin();
+}
+
+// ====================================================================
+// FUNÇÕES DE CRUD (Requisito 4)
+// ====================================================================
+
+// Função Genérica para Inclusão de Dados
+function incluirRegistro(tipo, dados) {
+    let registros = JSON.parse(localStorage.getItem(tipo)) || [];
+    dados.id = Date.now(); 
+    registros.push(dados);
+    localStorage.setItem(tipo, JSON.stringify(registros));
+    alert(`${tipo.charAt(0).toUpperCase() + tipo.slice(1)} incluído com sucesso!`);
+    
+    // Após a inclusão, redireciona para a página principal
+    irParaPrincipal();
+}
+
+// Funções Específicas de Cadastro (Chamadas pelos botões)
+
+function incluirUsuario(email, senha) {
+    const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+    
+    if (usuarios.some(u => u.email === email)) {
+        alert('Erro: Este e-mail já está cadastrado.');
+        return;
+    }
+    // O nome é opcional, mas o email e senha são obrigatórios.
+    incluirRegistro('usuarios', { email: email, senha: senha }); 
+}
+
+function incluirLivro(titulo, autor) {
+    incluirRegistro('livros', { titulo: titulo, autor: autor });
+}
+
+function incluirAutor(nome) {
+    incluirRegistro('autores', { nome: nome });
+}
+
+
+// ====================================================================
+// INICIALIZAÇÃO
+// ====================================================================
+
+// Chamada da função de segurança ao carregar qualquer página
+document.addEventListener('DOMContentLoaded', verificarLogin);
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Savir Sistemas - Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script src="scripts.js"></script> 
+</head>
+
+<body class="bg-light min-vh-100 d-flex flex-column">
+
+    <div id="menu">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="principal.html">Gerenciar Biblioteca</a>
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                
+                <li class="nav-item">
+                    <a class="nav-link active" href="principal.html">Início</a>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a
+                        class="nav-link dropdown-toggle"
+                        href="#"
+                        id="cadastrosDropdown"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                    >
+                        Cadastros
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="cadastrosDropdown">
+                        <li><a class="dropdown-item" href="usuarios/cadastro_usuarios.html">Usuários</a></li>
+                        <li><a class="dropdown-item" href="livros/cadastro_livros.html">Livros</a></li>
+                        <li><a class="dropdown-item" href="autores/cadastro_autores.html">Autores</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="fazerLogout()">Sair</a></li>
+                    </ul>
+                </li>
+                
+                <li class="nav-item"><a class="nav-link" href="#">Sobre</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Serviços</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Contato</a></li>
+                
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<script>
+    // ESTA LÓGICA DEVE SER COLADA JUNTO COM O MENU!
+    // Ela corrige os caminhos do menu dinamicamente
+    function ajustarLinksMenu() {
+        const path = window.location.pathname;
+        const links = document.querySelectorAll('#navbarNav a:not([onclick])'); 
+
+        const isSubFolder = path.includes('/usuarios/') || path.includes('/livros/') || path.includes('/autores/');
+
+        links.forEach(link => {
+            let href = link.getAttribute('href');
+            
+            if (href && !href.startsWith('http')) {
+                if (isSubFolder) {
+                    // Estamos em /usuarios/, os links precisam de ../
+                    if (!href.startsWith('../')) {
+                         link.setAttribute('href', `../${href}`);
+                    }
+                } else {
+                    // Estamos na raiz (login/principal), os links não precisam de ../
+                    if (href.startsWith('../')) {
+                        link.setAttribute('href', href.substring(3));
+                    }
+                }
+            }
+        });
+    }
+    // Chama a função após o conteúdo ser carregado
+    document.addEventListener('DOMContentLoaded', ajustarLinksMenu);
+</script>
+        </div>
+    
+    <main id="principal" class="container-fluid flex-fill d-flex align-items-center justify-content-center">
+        
+        <div class="card shadow p-4" style="max-width: 360px; width: 100%;">
+            <h2 class="text-center mb-4">Login</h2>
+            
+            <form id="formLogin">
+                <div class="mb-3">
+                    <label for="email" class="form-label text-danger">e-mail</label>
+                    <input type="email" class="form-control" id="email" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="senha" class="form-label text-danger">Senha</label>
+                    <input type="password" class="form-control" id="senha" required>
+                </div>
+                
+                <div class="d-grid">
+                    <button type="button" class="btn btn-primary" onclick="processarLogin()">Entrar</button>
+                </div>
+            </form>
+            
+            <p class="mt-3 text-center text-muted">Dica: Cadastre um usuário em /usuarios/cadastro_usuarios.html primeiro.</p>
+
+        </div>
+    </main><!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cadastro de Usuários</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script src="../scripts.js"></script> 
+</head>
+<body class="bg-light min-vh-100 d-flex flex-column">
+    
+    <script>verificarLogin();</script>
+
+    <div id="menu">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="../principal.html">Gerenciar Biblioteca</a>
+                <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav"
+                >
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="../principal.html">Início</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a
+                                class="nav-link dropdown-toggle"
+                                href="#"
+                                id="cadastrosDropdown"
+                                role="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                            >
+                                Cadastros
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="cadastrosDropdown">
+                                <li><a class="dropdown-item" href="cadastro_usuarios.html">Usuários</a></li>
+                                <li><a class="dropdown-item" href="../livros/cadastro_livros.html">Livros</a></li>
+                                <li><a class="dropdown-item" href="../autores/cadastro_autores.html">Autores</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" onclick="fazerLogout()">Sair</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="#">Sobre</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Serviços</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Contato</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <script>
+            // Lógica de ajuste de links
+            function ajustarLinksMenu() {
+                const path = window.location.pathname;
+                const links = document.querySelectorAll('#navbarNav a:not([onclick])'); 
+                const isSubFolder = path.includes('/usuarios/') || path.includes('/livros/') || path.includes('/autores/');
+                links.forEach(link => {
+                    let href = link.getAttribute('href');
+                    if (href && !href.startsWith('http')) {
+                        if (isSubFolder) {
+                            if (!href.startsWith('../')) {
+                                 link.setAttribute('href', `../${href}`);
+                            }
+                        } else {
+                            if (href.startsWith('../')) {
+                                link.setAttribute('href', href.substring(3));
+                            }
+                        }
+                    }
+                });
+            }
+            document.addEventListener('DOMContentLoaded', ajustarLinksMenu);
+        </script>
+    </div>
+    <main class="container flex-fill mt-4">
+        <h2>Cadastro de Usuários</h2>
+        
+        <div class="card p-4 mb-4" id="form-inclusao">
+            <h4>Incluir Novo Usuário</h4>
+            <form onsubmit="event.preventDefault(); processarInclusao();">
+                
+                <input type="text" id="nome-incluir" class="form-control mb-2" placeholder="Nome" required>
+                
+                <input type="email" id="email-incluir" class="form-control mb-2" placeholder="E-mail" required>
+                
+                <input type="password" id="senha-incluir" class="form-control mb-3" placeholder="Senha" required>
+                
+                <button type="submit" class="btn btn-success">Salvar (Incluir)</button>
+            </form>
+        </div>
+        
+        <div class="card p-4 mb-4" id="form-edicao" style="display:none;">
+            <h4>Editar Usuário (Funcionalidade de edição não implementada)</h4>
+            <form>
+                <input type="hidden" id="id-editar">
+                <input type="text" id="nome-editar" class="form-control mb-2" placeholder="Nome" disabled>
+                <input type="email" id="email-editar" class="form-control mb-3" placeholder="E-mail" disabled>
+                <button type="button" class="btn btn-warning" disabled>Salvar Edição</button>
+                <button type="button" class="btn btn-secondary" onclick="cancelarEdicao()">Cancelar</button>
+            </form>
+        </div>
+        
+        <h4 class="mt-5">Usuários Cadastrados</h4>
+        <table class="table table-striped">
+            <thead>
+                <tr><th>ID</th><th>Nome</th><th>E-mail</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="tabela-dados">
+                </tbody>
+        </table>
+        
+    </main>
+    
+    <div id="rodape">
+        <footer class="bg-dark text-white text-center py-3 mt-auto">
+            &copy; 2025 Savir Sistemas Todos os direitos reservados
+        </footer>
+    </div>
+    <script>
+        // ESTA FUNÇÃO ESTAVA FALTANDO E CAUSAVA O ERRO "is not defined"
+        function processarInclusao() {
+            const email = document.getElementById('email-incluir').value;
+            const senha = document.getElementById('senha-incluir').value;
+            
+            // Chama a função de inclusão no scripts.js (que também trata o redirecionamento)
+            incluirUsuario(email, senha); 
+            
+            // Limpa o formulário após a tentativa
+            document.getElementById('form-inclusao').querySelector('form').reset();
+        }
+
+        // Funções de LISTAGEM
+        function exibirDados() {
+            const lista = JSON.parse(localStorage.getItem('usuarios')) || [];
+            const tbody = document.getElementById('tabela-dados');
+            tbody.innerHTML = ''; 
+            
+            lista.forEach(item => {
+                const row = tbody.insertRow();
+                row.insertCell().textContent = item.id;
+                row.insertCell().textContent = item.nome || 'N/A'; 
+                row.insertCell().textContent = item.email;
+
+                const acoesCell = row.insertCell();
+                
+                const btnExcluir = document.createElement('button');
+                btnExcluir.textContent = 'Excluir';
+                btnExcluir.className = 'btn btn-sm btn-danger';
+                btnExcluir.onclick = () => {
+                    if (confirm('Tem certeza que deseja excluir este usuário?')) {
+                        alert('Usuário excluído!');
+                        exibirDados();
+                    }
+                };
+                acoesCell.appendChild(btnExcluir);
+            });
+        }
+        
+        // Chamada de listagem (ao carregar)
+        window.onload = exibirDados;
+
+    </script>
+</body>
+</html>
+
+    <div id="rodape">
+        <footer class="bg-dark text-white text-center py-3 mt-auto">
+    &copy; 2025 Savir Sistemas Todos os direitos reservados
+</footer>
+        </div>
+    
+    <script>
+        // Função que pega os valores dos campos e chama a lógica principal do scripts.js
+        function processarLogin() {<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cadastro de Livros</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script src="../scripts.js"></script> 
+</head>
+<body class="bg-light min-vh-100 d-flex flex-column">
+    
+    <script>verificarLogin();</script>
+
+    <div id="menu">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="../principal.html">Gerenciar Biblioteca</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="../principal.html">Início</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="cadastrosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Cadastros</a>
+                            <ul class="dropdown-menu" aria-labelledby="cadastrosDropdown">
+                                <li><a class="dropdown-item" href="../usuarios/cadastro_usuarios.html">Usuários</a></li>
+                                <li><a class="dropdown-item" href="cadastro_livros.html">Livros</a></li>
+                                <li><a class="dropdown-item" href="../autores/cadastro_autores.html">Autores</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" onclick="fazerLogout()">Sair</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="#">Sobre</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Serviços</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Contato</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <script>
+            // Lógica de ajuste de links (mantida)
+            function ajustarLinksMenu() {
+                const path = window.location.pathname;
+                const links = document.querySelectorAll('#navbarNav a:not([onclick])'); 
+                const isSubFolder = path.includes('/usuarios/') || path.includes('/livros/') || path.includes('/autores/');
+                links.forEach(link => {
+                    let href = link.getAttribute('href');
+                    if (href && !href.startsWith('http')) {
+                        if (isSubFolder) {
+                            if (!href.startsWith('../')) {
+                                 link.setAttribute('href', `../${href}`);
+                            }
+                        } else {
+                            if (href.startsWith('../')) {
+                                link.setAttribute('href', href.substring(3));
+                            }
+                        }
+                    }
+                });
+            }
+            document.addEventListener('DOMContentLoaded', ajustarLinksMenu);
+        </script>
+    </div>
+    <main class="container flex-fill mt-4">
+        <h2>Cadastro de Livros</h2>
+        
+        <div class="card p-4 mb-4" id="form-inclusao">
+            <h4>Incluir Novo Livro</h4>
+            <form onsubmit="event.preventDefault(); processarInclusaoLivro();">
+                <input type="text" id="titulo-incluir" class="form-control mb-2" placeholder="Título do Livro" required>
+                <input type="text" id="autor-incluir" class="form-control mb-3" placeholder="Autor" required>
+                <button type="submit" class="btn btn-success">Salvar (Incluir)</button>
+            </form>
+        </div>
+        
+        <h4 class="mt-5">Livros Cadastrados</h4>
+        <table class="table table-striped">
+            <thead>
+                <tr><th>ID</th><th>Título</th><th>Autor</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="tabela-dados-livros">
+                </tbody>
+        </table>
+        
+    </main>
+    
+    <div id="rodape">
+        <footer class="bg-dark text-white text-center py-3 mt-auto">
+            &copy; 2025 Savir Sistemas Todos os direitos reservados
+        </footer>
+    </div>
+    <script>
+        // Funções Específicas de Processamento e Listagem
+        
+        function processarInclusaoLivro() {
+            const titulo = document.getElementById('titulo-incluir').value;
+            const autor = document.getElementById('autor-incluir').value;
+            
+            // Chama a função global no scripts.js
+            incluirLivro(titulo, autor); 
+            
+            // Atualiza a lista e limpa o formulário
+            exibirDadosLivros();
+            document.getElementById('form-inclusao').querySelector('form').reset();
+        }
+
+        // Função de Listagem
+        function exibirDadosLivros() {
+            const lista = JSON.parse(localStorage.getItem('livros')) || [];
+            const tbody = document.getElementById('tabela-dados-livros');
+            tbody.innerHTML = ''; 
+            
+            lista.forEach((item, index) => {
+                const row = tbody.insertRow();
+                row.insertCell().textContent = item.id;
+                row.insertCell().textContent = item.titulo;
+                row.insertCell().textContent = item.autor;
+
+                const acoesCell = row.insertCell();
+                
+                // Excluir (a função de exclusão precisa ser genérica, mas aqui faremos um alerta)
+                const btnExcluir = document.createElement('button');
+                btnExcluir.textContent = 'Excluir';
+                btnExcluir.className = 'btn btn-sm btn-danger';
+                btnExcluir.onclick = () => {
+                    if (confirm(`Tem certeza que deseja excluir o livro "${item.titulo}"?`)) {
+                        
+                        // Lógica de exclusão simplificada (Remoção do local storage)
+                        lista.splice(index, 1);
+                        localStorage.setItem('livros', JSON.stringify(lista));
+                        alert('Livro excluído!');
+                        
+                        exibirDadosLivros(); // Atualiza a lista
+                    }
+                };
+                acoesCell.appendChild(btnExcluir);
+            });
+        }
+        
+        // Chamada de listagem ao carregar a página
+        window.onload = exibirDadosLivros;
+
+    </script>
+</body><!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cadastro de Autores</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script src="../scripts.js"></script> 
+</head>
+<body class="bg-light min-vh-100 d-flex flex-column">
+    
+    <script>verificarLogin();</script>
+
+    <div id="menu">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="../principal.html">Gerenciar Biblioteca</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="../principal.html">Início</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="cadastrosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Cadastros</a>
+                            <ul class="dropdown-menu" aria-labelledby="cadastrosDropdown">
+                                <li><a class="dropdown-item" href="../usuarios/cadastro_usuarios.html">Usuários</a></li>
+                                <li><a class="dropdown-item" href="../livros/cadastro_livros.html">Livros</a></li>
+                                <li><a class="dropdown-item" href="cadastro_autores.html">Autores</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" onclick="fazerLogout()">Sair</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="#">Sobre</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Serviços</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Contato</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <script>
+            // Lógica de ajuste de links (mantida)
+            function ajustarLinksMenu() {
+                const path = window.location.pathname;
+                const links = document.querySelectorAll('#navbarNav a:not([onclick])'); 
+                const isSubFolder = path.includes('/usuarios/') || path.includes('/livros/') || path.includes('/autores/');
+                links.forEach(link => {
+                    let href = link.getAttribute('href');
+                    if (href && !href.startsWith('http')) {
+                        if (isSubFolder) {
+                            if (!href.startsWith('../')) {
+                                 link.setAttribute('href', `../${href}`);
+                            }
+                        } else {
+                            if (href.startsWith('../')) {
+                                link.setAttribute('href', href.substring(3));
+                            }
+                        }
+                    }
+                });
+            }
+            document.addEventListener('DOMContentLoaded', ajustarLinksMenu);
+        </script>
+    </div>
+    <main class="container flex-fill mt-4">
+        <h2>Cadastro de Autores</h2>
+        
+        <div class="card p-4 mb-4" id="form-inclusao">
+            <h4>Incluir Novo Autor</h4>
+            <form onsubmit="event.preventDefault(); processarInclusaoAutor();">
+                <input type="text" id="nome-autor-incluir" class="form-control mb-3" placeholder="Nome do Autor" required>
+                <button type="submit" class="btn btn-success">Salvar (Incluir)</button>
+            </form>
+        </div>
+        
+        <h4 class="mt-5">Autores Cadastrados</h4>
+        <table class="table table-striped">
+            <thead>
+                <tr><th>ID</th><th>Nome</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="tabela-dados-autores">
+                </tbody>
+        </table>
+        
+    </main>
+    
+    <div id="rodape">
+        <footer class="bg-dark text-white text-center py-3 mt-auto">
+            &copy; 2025 Savir Sistemas Todos os direitos reservados
+        </footer>
+    </div>
+    <script>
+        
+        function processarInclusaoAutor() {
+            const nome = document.getElementById('nome-autor-incluir').value;
+            
+            // Chama a função global no scripts.js
+            incluirAutor(nome); 
+            
+            // Atualiza a lista e limpa o formulário
+            exibirDadosAutores();
+            document.getElementById('form-inclusao').querySelector('form').reset();
+        }
+
+        // Função de Listagem
+        function exibirDadosAutores() {
+            const lista = JSON.parse(localStorage.getItem('autores')) || [];
+            const tbody = document.getElementById('tabela-dados-autores');
+            tbody.innerHTML = ''; 
+            
+            lista.forEach((item, index) => {
+                const row = tbody.insertRow();
+                row.insertCell().textContent = item.id;
+                row.insertCell().textContent = item.nome;
+
+                const acoesCell = row.insertCell();
+                
+                // Excluir
+                const btnExcluir = document.createElement('button');
+                btnExcluir.textContent = 'Excluir';
+                btnExcluir.className = 'btn btn-sm btn-danger';
+                btnExcluir.onclick = () => {
+                    if (confirm(`Tem certeza que deseja excluir o autor "${item.nome}"?`)) {
+                        
+                        // Lógica de exclusão simplificada
+                        lista.splice(index, 1);
+                        localStorage.setItem('autores', JSON.stringify(lista));
+                        alert('Autor excluído!');
+                        
+                        exibirDadosAutores(); // Atualiza a lista
+                    }
+                };
+                acoesCell.appendChild(btnExcluir);
+            });
+        }
+        
+        // Chamada de listagem ao carregar a página
+        window.onload = exibirDadosAutores;
+
+    </script>
+</body>
+</html>
+</html>
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            fazerLogin(email, senha);
+        }
+    </script>
+    
+</body>
+</html>
