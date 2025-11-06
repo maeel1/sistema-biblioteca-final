@@ -1,0 +1,79 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="../principal.html">Savir Sistemas</a>
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                
+                <li class="nav-item">
+                    <a class="nav-link" href="../principal.html">Início</a>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a
+                        class="nav-link dropdown-toggle"
+                        href="#"
+                        id="cadastrosDropdown"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                    >
+                        Cadastros
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="cadastrosDropdown">
+                        <li><a class="dropdown-item" href="../usuarios/cadastro_usuarios.html">Usuários</a></li>
+                        <li><a class="dropdown-item" href="../livros/cadastro_livros.html">Livros</a></li>
+                        <li><a class="dropdown-item" href="../autores/cadastro_autores.html">Autores</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="fazerLogout()">Sair</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<script>
+    // ESTA LÓGICA É CRUCIAL. Ela ajusta os links do menu para funcionar corretamente 
+    // em páginas que estão em subpastas (como /usuarios/cadastro_usuarios.html)
+
+    // O código acima usa links relativos (ex: ../principal.html).
+    // Se a página for a principal (na raiz), ela precisa de links sem o "../".
+    // Se a página for um cadastro (em uma subpasta), ela precisa do "../".
+
+    // Esta função ajusta o caminho dos links no menu dinamicamente.
+    function ajustarLinksMenu() {
+        const path = window.location.pathname;
+        const links = document.querySelectorAll('#navbarNav a');
+
+        links.forEach(link => {
+            let href = link.getAttribute('href');
+            
+            // Só ajusta links que apontam para arquivos do projeto
+            if (href && !href.startsWith('http') && !href.startsWith('#')) {
+                // Se a página atual está em uma subpasta (ex: /usuarios/...)
+                if (path.includes('/usuarios/') || path.includes('/livros/') || path.includes('/autros/')) {
+                    // Os links já estão corretos (com ../)
+                } else {
+                    // Se a página está na raiz (ex: principal.html), remove o "../"
+                    if (href.startsWith('../')) {
+                        link.setAttribute('href', href.substring(3));
+                    }
+                }
+            }
+        });
+    }
+
+    // Chama a função após o menu ser carregado (ou na inicialização)
+    document.addEventListener('DOMContentLoaded', ajustarLinksMenu);
+</script>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Savir Sistemas - Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script src="scripts.js"></script> 
+</head>
+
+<body class="bg-light min-vh-100 d-flex flex-column">
+
+    <div id="menu">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="principal.html">Gerenciar Biblioteca</a>
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                
+                <li class="nav-item">
+                    <a class="nav-link active" href="principal.html">Início</a>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a
+                        class="nav-link dropdown-toggle"
+                        href="#"
+                        id="cadastrosDropdown"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                    >
+                        Cadastros
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="cadastrosDropdown">
+                        <li><a class="dropdown-item" href="usuarios/cadastro_usuarios.html">Usuários</a></li>
+                        <li><a class="dropdown-item" href="livros/cadastro_livros.html">Livros</a></li>
+                        <li><a class="dropdown-item" href="autores/cadastro_autores.html">Autores</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="fazerLogout()">Sair</a></li>
+                    </ul>
+                </li>
+                
+                <li class="nav-item"><a class="nav-link" href="#">Sobre</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Serviços</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Contato</a></li>
+                
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<script>
+    // ESTA LÓGICA DEVE SER COLADA JUNTO COM O MENU!
+    // Ela corrige os caminhos do menu dinamicamente
+    function ajustarLinksMenu() {
+        const path = window.location.pathname;
+        const links = document.querySelectorAll('#navbarNav a:not([onclick])'); 
+
+        const isSubFolder = path.includes('/usuarios/') || path.includes('/livros/') || path.includes('/autores/');
+
+        links.forEach(link => {
+            let href = link.getAttribute('href');
+            
+            if (href && !href.startsWith('http')) {
+                if (isSubFolder) {
+                    // Estamos em /usuarios/, os links precisam de ../
+                    if (!href.startsWith('../')) {
+                         link.setAttribute('href', `../${href}`);
+                    }
+                } else {
+                    // Estamos na raiz (login/principal), os links não precisam de ../
+                    if (href.startsWith('../')) {
+                        link.setAttribute('href', href.substring(3));
+                    }
+                }
+            }
+        });
+    }
+    // Chama a função após o conteúdo ser carregado
+    document.addEventListener('DOMContentLoaded', ajustarLinksMenu);
+</script>
+        </div>
+    
+    <main id="principal" class="container-fluid flex-fill d-flex align-items-center justify-content-center">
+        
+        <div class="card shadow p-4" style="max-width: 360px; width: 100%;">
+            <h2 class="text-center mb-4">Login</h2>
+            
+            <form id="formLogin">
+                <div class="mb-3">
+                    <label for="email" class="form-label text-danger">e-mail</label>
+                    <input type="email" class="form-control" id="email" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="senha" class="form-label text-danger">Senha</label>
+                    <input type="password" class="form-control" id="senha" required>
+                </div>
+                
+                <div class="d-grid">
+                    <button type="button" class="btn btn-primary" onclick="processarLogin()">Entrar</button>
+                </div>
+            </form>
+            
+            <p class="mt-3 text-center text-muted">Dica: Cadastre um usuário em /usuarios/cadastro_usuarios.html primeiro.</p>
+
+        </div>
+    </main>
+
+    <div id="rodape">
+        <footer class="bg-dark text-white text-center py-3 mt-auto">
+    &copy; 2025 Savir Sistemas Todos os direitos reservados
+</footer>
+        </div>
+    
+    <script>
+        // Função que pega os valores dos campos e chama a lógica principal do scripts.js
+        function processarLogin() {
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            fazerLogin(email, senha);
+        }
+    </script>
+    
+</body>
+</html>
