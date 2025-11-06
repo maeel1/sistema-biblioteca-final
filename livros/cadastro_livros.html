@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cadastro de Livros</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script src="../scripts.js"></script> 
+</head>
+<body class="bg-light min-vh-100 d-flex flex-column">
+    
+    <script>verificarLogin();</script>
+
+    <div id="menu">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="../principal.html">Gerenciar Biblioteca</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="../principal.html">Início</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="cadastrosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Cadastros</a>
+                            <ul class="dropdown-menu" aria-labelledby="cadastrosDropdown">
+                                <li><a class="dropdown-item" href="../usuarios/cadastro_usuarios.html">Usuários</a></li>
+                                <li><a class="dropdown-item" href="cadastro_livros.html">Livros</a></li>
+                                <li><a class="dropdown-item" href="../autores/cadastro_autores.html">Autores</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" onclick="fazerLogout()">Sair</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="#">Sobre</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Serviços</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Contato</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <script>
+            // Lógica de ajuste de links (mantida)
+            function ajustarLinksMenu() {
+                const path = window.location.pathname;
+                const links = document.querySelectorAll('#navbarNav a:not([onclick])'); 
+                const isSubFolder = path.includes('/usuarios/') || path.includes('/livros/') || path.includes('/autores/');
+                links.forEach(link => {
+                    let href = link.getAttribute('href');
+                    if (href && !href.startsWith('http')) {
+                        if (isSubFolder) {
+                            if (!href.startsWith('../')) {
+                                 link.setAttribute('href', `../${href}`);
+                            }
+                        } else {
+                            if (href.startsWith('../')) {
+                                link.setAttribute('href', href.substring(3));
+                            }
+                        }
+                    }
+                });
+            }
+            document.addEventListener('DOMContentLoaded', ajustarLinksMenu);
+        </script>
+    </div>
+    <main class="container flex-fill mt-4">
+        <h2>Cadastro de Livros</h2>
+        
+        <div class="card p-4 mb-4" id="form-inclusao">
+            <h4>Incluir Novo Livro</h4>
+            <form onsubmit="event.preventDefault(); processarInclusaoLivro();">
+                <input type="text" id="titulo-incluir" class="form-control mb-2" placeholder="Título do Livro" required>
+                <input type="text" id="autor-incluir" class="form-control mb-3" placeholder="Autor" required>
+                <button type="submit" class="btn btn-success">Salvar (Incluir)</button>
+            </form>
+        </div>
+        
+        <h4 class="mt-5">Livros Cadastrados</h4>
+        <table class="table table-striped">
+            <thead>
+                <tr><th>ID</th><th>Título</th><th>Autor</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="tabela-dados-livros">
+                </tbody>
+        </table>
+        
+    </main>
+    
+    <div id="rodape">
+        <footer class="bg-dark text-white text-center py-3 mt-auto">
+            &copy; 2025 Savir Sistemas Todos os direitos reservados
+        </footer>
+    </div>
+    <script>
+        // Funções Específicas de Processamento e Listagem
+        
+        function processarInclusaoLivro() {
+            const titulo = document.getElementById('titulo-incluir').value;
+            const autor = document.getElementById('autor-incluir').value;
+            
+            // Chama a função global no scripts.js
+            incluirLivro(titulo, autor); 
+            
+            // Atualiza a lista e limpa o formulário
+            exibirDadosLivros();
+            document.getElementById('form-inclusao').querySelector('form').reset();
+        }
+
+        // Função de Listagem
+        function exibirDadosLivros() {
+            const lista = JSON.parse(localStorage.getItem('livros')) || [];
+            const tbody = document.getElementById('tabela-dados-livros');
+            tbody.innerHTML = ''; 
+            
+            lista.forEach((item, index) => {
+                const row = tbody.insertRow();
+                row.insertCell().textContent = item.id;
+                row.insertCell().textContent = item.titulo;
+                row.insertCell().textContent = item.autor;
+
+                const acoesCell = row.insertCell();
+                
+                // Excluir (a função de exclusão precisa ser genérica, mas aqui faremos um alerta)
+                const btnExcluir = document.createElement('button');
+                btnExcluir.textContent = 'Excluir';
+                btnExcluir.className = 'btn btn-sm btn-danger';
+                btnExcluir.onclick = () => {
+                    if (confirm(`Tem certeza que deseja excluir o livro "${item.titulo}"?`)) {
+                        
+                        // Lógica de exclusão simplificada (Remoção do local storage)
+                        lista.splice(index, 1);
+                        localStorage.setItem('livros', JSON.stringify(lista));
+                        alert('Livro excluído!');
+                        
+                        exibirDadosLivros(); // Atualiza a lista
+                    }
+                };
+                acoesCell.appendChild(btnExcluir);
+            });
+        }
+        
+        // Chamada de listagem ao carregar a página
+        window.onload = exibirDadosLivros;
+
+    </script>
+</body>
+</html>
